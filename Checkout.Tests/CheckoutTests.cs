@@ -16,12 +16,31 @@ namespace Checkout.Tests
             [ValuesAttribute("", null, " ")] string sku)
         {
             //arrange
-            var respository = A.Fake<IStockRepository>();
-            ICheckout checkout = new Checkout(respository);
+            var repository = A.Fake<IStockRepository>();
+            ICheckout checkout = new Checkout(repository);
 
             //act + assert
             Assert.Throws<InvalidSkuException>(() => checkout.Scan(sku));
         }
-       
+
+        public void Scan_WhenSkuIsMissing_ShouldNotCallStockRepository(
+            [ValuesAttribute("", null, " ")] string sku)
+        {
+            //arrange
+            var repository = A.Fake<IStockRepository>();
+            ICheckout checkout = new Checkout(repository);
+
+            //act
+            try
+            {
+                checkout.Scan(sku);
+            }
+            catch
+            {     
+            }
+
+            //assert
+            A.CallTo(() => repository.GetStockItem(A<string>.Ignored)).MustNotHaveHappened();
+        }
     }
 }
