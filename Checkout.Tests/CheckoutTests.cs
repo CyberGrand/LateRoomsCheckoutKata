@@ -44,6 +44,25 @@ namespace Checkout.Tests
             A.CallTo(() => repository.GetStockItem(A<string>.Ignored)).MustNotHaveHappened();
         }
 
-        
+        [Test]
+        public void Scan_WhenSkuIsMissing_ShouldNotCallStockRepositoryGetSpecialPrice(
+            [ValuesAttribute("", null, " ")] string sku)
+        {
+            //arrange
+            var repository = A.Fake<IStockRepository>();
+            ICheckout checkout = new Checkout(repository);
+
+            //act
+            try
+            {
+                checkout.Scan(sku);
+            }
+            catch
+            {
+            }
+
+            //assert
+            A.CallTo(() => repository.GetSpecialPrice(A<string>.Ignored)).MustNotHaveHappened();
+        }
     }
 }
