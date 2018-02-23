@@ -9,6 +9,7 @@ namespace Checkout
     public class Checkout : ICheckout
     {
         private IStockRepository _stockRepository;
+        private List<StockItem> _stockItemList = new List<StockItem>();
 
         public Checkout(IStockRepository stockRepository)
         {
@@ -17,7 +18,7 @@ namespace Checkout
 
         public int GetTotalPrice()
         {
-            return 0;
+            return _stockItemList.Sum(s => s.Price);
         }
 
         public void Scan(string sku)
@@ -26,6 +27,10 @@ namespace Checkout
             {
                 throw new InvalidSkuException();
             }
+
+            var stockItem = _stockRepository.GetStockItem(sku);
+
+            _stockItemList.Add(stockItem);
         }
     }
 }
