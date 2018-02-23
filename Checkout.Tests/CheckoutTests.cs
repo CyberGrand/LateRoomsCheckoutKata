@@ -8,5 +8,6 @@ namespace Checkout.Tests
 {
     public class CheckoutTests
     {
+
     }
 }
