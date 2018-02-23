@@ -129,6 +129,32 @@ namespace Checkout.Tests
             Assert.AreEqual(totalPrice, result);
         }
 
+        [Test]
+        [TestCase(new[] { "A", "B", "A" }, 130, TestName = "Special price quantity not reached")]
+        [TestCase(new[] { "A", "A", "A" }, 130, TestName = "Special price quantity reached for 'A'")]
+        public void GetTotalPrice_WhenSpecialPricesIncluded_MustBeCorrect(string[] skuList, int totalPrice)
+        {
+            //arrange
+            var repository = A.Fake<IStockRepository>();
+            foreach (var key in _stockListDict.Keys)
+            {
+                A.CallTo(() => repository.GetStockItem(key)).Returns(_stockListDict[key]);
+                var specialPrice = _specialPriceRuleDict.ContainsKey(key)
+                    ? _specialPriceRuleDict[key]
+                    : null;
+                A.CallTo(() => repository.GetSpecialPrice(A<string>.Ignored)).Returns(specialPrice);
+            }
+            var sut = new Checkout(repository);
 
+            //act
+            foreach (var sku in skuList)
+            {
+                sut.Scan(sku);
+            }
+            var result = sut.GetTotalPrice();
+
+            //assert
+            Assert.AreEqual(totalPrice, result);
+        }
     }
 }
