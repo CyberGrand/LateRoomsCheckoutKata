@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Checkout.cs" />
     <Compile Include="ICheckout.cs" />
+    <Compile Include="InvalidSkuException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IStockRepository.cs" />
     <Compile Include="SpecialPriceRule.cs" />
