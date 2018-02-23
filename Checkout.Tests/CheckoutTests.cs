@@ -84,5 +84,51 @@ namespace Checkout.Tests
             //assert
             Assert.AreEqual(unitPrice, result);
         }
+
+        Dictionary<string, StockItem> _stockListDict;
+        Dictionary<string, SpecialPriceRule> _specialPriceRuleDict;
+
+        [TestFixtureSetUp]
+        public void Init()
+        {
+            _stockListDict = new Dictionary<string, StockItem>();
+            _stockListDict.Add("A", new StockItem("A", 50));
+            _stockListDict.Add("B", new StockItem("B", 30));
+            _stockListDict.Add("C", new StockItem("C", 20));
+            _stockListDict.Add("D", new StockItem("D", 15));
+
+            _specialPriceRuleDict = new Dictionary<string, SpecialPriceRule>();
+            _specialPriceRuleDict.Add("A", new SpecialPriceRule("A", 3, 130));
+            _specialPriceRuleDict.Add("B", new SpecialPriceRule("B", 2, 45));
+        }
+
+        [Test]
+        [TestCase(new[] { "A", "B" }, 80)]
+        [TestCase(new[] { "B", "C", "D" }, 65)]
+        [TestCase(new[] { "B", "A", "B" }, 110)]
+        [TestCase(new[] { "A", "A", "A" }, 150)]
+        public void GetTotalPrice_WhenGetBasicPriceMultipleItems_MustBeCorrect(string[] skuList, int totalPrice)
+        {
+            //arrange
+            var repository = A.Fake<IStockRepository>();
+            foreach (var key in _stockListDict.Keys)
+            {
+                A.CallTo(() => repository.GetStockItem(key)).Returns(_stockListDict[key]);
+                A.CallTo(() => repository.GetSpecialPrice(A<string>.Ignored)).Returns(null);
+            }
+            var sut = new Checkout(repository);
+
+            //act
+            foreach (var sku in skuList)
+            {
+                sut.Scan(sku);
+            }
+            var result = sut.GetTotalPrice();
+
+            //assert
+            Assert.AreEqual(totalPrice, result);
+        }
+
+
     }
 }
