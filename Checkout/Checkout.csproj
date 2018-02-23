@@ -44,7 +44,7 @@
     <Compile Include="ICheckout.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IStockRepository.cs" />
-    <Compile Include="SpecialPrice.cs" />
+    <Compile Include="SpecialPriceRule.cs" />
     <Compile Include="StockItem.cs" />
     <Compile Include="PriceBase.cs" />
   </ItemGroup>

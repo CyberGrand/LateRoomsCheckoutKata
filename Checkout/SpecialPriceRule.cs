@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Checkout
 {
-    public class SpecialPrice : PriceBase
+    public class SpecialPriceRule : PriceBase
     {
-        public SpecialPrice(string sku, int requiredQuantity, int price) : base(sku, price)
+        public SpecialPriceRule(string sku, int requiredQuantity, int price) : base(sku, price)
         {
             RequiredQuantity = requiredQuantity;
         }
