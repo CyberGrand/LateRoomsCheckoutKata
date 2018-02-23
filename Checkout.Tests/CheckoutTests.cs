@@ -23,6 +23,7 @@ namespace Checkout.Tests
             Assert.Throws<InvalidSkuException>(() => checkout.Scan(sku));
         }
 
+        [Test]
         public void Scan_WhenSkuIsMissing_ShouldNotCallStockRepositoryGetStockItemMethod(
             [ValuesAttribute("", null, " ")] string sku)
         {
@@ -42,6 +43,7 @@ namespace Checkout.Tests
             //assert
             A.CallTo(() => repository.GetStockItem(A<string>.Ignored)).MustNotHaveHappened();
         }
+
         
     }
 }
