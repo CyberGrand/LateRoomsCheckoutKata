@@ -12,15 +12,16 @@ namespace Checkout.Tests
     public class CheckoutTests
     {
         [Test]
-        public void Scan_WhenSkuIsNull_ShouldThrowException()
+        public void Scan_WhenSkuIsMissing_ShouldThrowException(
+            [ValuesAttribute("", null, " ")] string sku)
         {
             //arrange
-            string sku = null;
             var respository = A.Fake<IStockRepository>();
             ICheckout checkout = new Checkout(respository);
 
             //act + assert
             Assert.Throws<InvalidSkuException>(() => checkout.Scan(sku));
         }
+       
     }
 }

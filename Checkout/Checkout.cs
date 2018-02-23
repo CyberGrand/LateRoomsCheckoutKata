@@ -22,7 +22,7 @@ namespace Checkout
 
         public void Scan(string sku)
         {
-            if (string.IsNullOrEmpty(sku))
+            if (string.IsNullOrWhiteSpace(sku))
             {
                 throw new InvalidSkuException();
             }
