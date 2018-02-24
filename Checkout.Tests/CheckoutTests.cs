@@ -75,6 +75,7 @@ namespace Checkout.Tests
             //arrange
             var repository = A.Fake<IStockRepository>();
             A.CallTo(() => repository.GetStockItem(sku)).Returns(new StockItem(sku, unitPrice));
+            A.CallTo(() => repository.GetSpecialPrice(sku)).Returns(null);
             var sut = new Checkout(repository);
 
             //act
@@ -131,7 +132,12 @@ namespace Checkout.Tests
 
         [Test]
         [TestCase(new[] { "A", "B", "A" }, 130, TestName = "Special price quantity not reached")]
-        [TestCase(new[] { "A", "A", "A" }, 130, TestName = "Special price quantity reached for 'A'")]
+        [TestCase(new[] { "A", "A", "A" }, 130, TestName = "Special price quantity reached for single item 1 time")]
+        [TestCase(new[] { "A", "A", "A", "A" }, 180, TestName = "Special price quantity reached for single item 1 time + 1 reminder")]
+        [TestCase(new[] { "A", "A", "A", "A", "A"}, 230, TestName = "Special price quantity reached for single item 1 time + 2 reminder")]
+        [TestCase(new[] { "A", "A", "B", "A", "B"}, 175, TestName = "Special price quantity reached for two items")]
+        [TestCase(new[] { "A", "A", "A", "D", "A", "A", "A"}, 275, TestName = "Special price quantity reached for single item 2 times, including non-discount item")]
+        [TestCase(new[] { "B", "D", "B", "D", "B", "B", "C", "B"}, 170, TestName = "Special price quantity reached for single item 2 times + 1 reminder, including non-discount items")]
         public void GetTotalPrice_WhenSpecialPricesIncluded_MustBeCorrect(string[] skuList, int totalPrice)
         {
             //arrange
@@ -142,7 +148,7 @@ namespace Checkout.Tests
                 var specialPrice = _specialPriceRuleDict.ContainsKey(key)
                     ? _specialPriceRuleDict[key]
                     : null;
-                A.CallTo(() => repository.GetSpecialPrice(A<string>.Ignored)).Returns(specialPrice);
+                A.CallTo(() => repository.GetSpecialPrice(key)).Returns(specialPrice);
             }
             var sut = new Checkout(repository);
 

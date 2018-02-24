@@ -18,7 +18,34 @@ namespace Checkout
 
         public int GetTotalPrice()
         {
-            return _stockItemList.Sum(s => s.Price);
+            var priceList = new List<PriceBase>();
+            var grouped = _stockItemList.GroupBy(x => x.Sku);
+            var totalPrice = 0;
+
+            foreach (var group in grouped)
+            {
+                var specialPrice = _stockRepository.GetSpecialPrice(group.Key);
+
+                if (specialPrice == null)
+                {
+                    totalPrice += group.Sum(x => x.Price);
+                }
+                else
+                {
+                    totalPrice += CalculateSpecialPrice(specialPrice, group.First(), group.Count());
+                }
+            }
+
+            return totalPrice;
+        }
+
+
+        private int CalculateSpecialPrice(SpecialPriceRule specialPrice, StockItem stockItem, int stockItemQuantity)
+        {
+            var specialQuantity = stockItemQuantity / specialPrice.RequiredQuantity;
+            var remainder = stockItemQuantity % specialPrice.RequiredQuantity;
+
+            return specialPrice.Price * specialQuantity + stockItem.Price * remainder;
         }
 
         public void Scan(string sku)
